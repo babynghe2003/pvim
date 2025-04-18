@@ -20,3 +20,18 @@ vim.api.nvim_create_autocmd({"TextChanged", "InsertLeave", "FocusLost"}, {
   command = "silent! wall"
 })
 
+-- -- Configure built-in commenting
+-- vim.opt.commentstring = "// %s" -- Default comment string
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = {"lua"}, 
+--   callback = function() vim.opt_local.commentstring = "-- %s" end
+-- })
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = {"python"}, 
+--   callback = function() vim.opt_local.commentstring = "# %s" end
+-- })
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = {"vim"}, 
+--   callback = function() vim.opt_local.commentstring = "\" %s" end
+-- })
+

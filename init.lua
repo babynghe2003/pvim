@@ -1,4 +1,3 @@
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 if not vim.loop.fs_stat(lazypath) then
@@ -15,4 +14,5 @@ vim.opt.rtp:prepend(lazypath)
 require("vim-option")
 require("lazy").setup("plugins")
 require("keymap")
-
+-- Load language-specific configurations
+require("language").setup()

@@ -2,10 +2,10 @@ local builtin = require("telescope.builtin")
 vim.keymap.set('n', '<C-p>', builtin.find_files, {})
 vim.keymap.set('n', '<C-f>', builtin.live_grep, {})
 
-vim.keymap.set('n', '<C-h>', '<C-w>h',{})
-vim.keymap.set('n', '<C-j>', '<C-w>j',{})
-vim.keymap.set('n', '<C-k>', '<C-w>k',{})
-vim.keymap.set('n', '<C-l>', '<C-w>l',{})
+vim.keymap.set('n', '<C-h>', '<C-w>h', {})
+vim.keymap.set('n', '<C-j>', '<C-w>j', {})
+vim.keymap.set('n', '<C-k>', '<C-w>k', {})
+vim.keymap.set('n', '<C-l>', '<C-w>l', {})
 
 -- Move lines up and down with Alt+j/k
 vim.keymap.set('n', '<M-j>', ':m+<CR>==', { noremap = true, silent = true })
@@ -25,8 +25,8 @@ vim.keymap.set('n', '<C-S-Up>', ':resize +5<CR>', { noremap = true, silent = tru
 vim.keymap.set('n', '<C-S-Down>', ':resize -5<CR>', { noremap = true, silent = true })
 
 -- Highlight word under cursor with double-click
-vim.keymap.set('n', '<2-LeftMouse>', ":let @/='\\V\\<'.escape(expand('<cword>'), '\\').'\\'<cr>:set hls<cr>", 
-               { noremap = true, silent = true })
+vim.keymap.set('n', '<2-LeftMouse>', ":let @/='\\V\\<'.escape(expand('<cword>'), '\\').'\\'<cr>:set hls<cr>",
+  { noremap = true, silent = true })
 
 -- Clear search highlights with Escape key
 vim.keymap.set('n', '<Esc>', ':nohl<CR>', { noremap = true, silent = true })
@@ -46,3 +46,22 @@ vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { noremap = true, silent = tru
 
 -- Show hover information
 vim.keymap.set('n', 'K', vim.lsp.buf.hover, { noremap = true, silent = true, desc = "Show hover info" })
+
+-- Remap built-in commenting to Ctrl+/
+-- Note: In many terminals, Ctrl+/ is interpreted as Ctrl+_ so we map both
+vim.keymap.set('n', '<C-/>', 'gcc', { remap = true, desc = "Toggle comment line" })
+vim.keymap.set('n', '<C-_>', 'gcc', { remap = true, desc = "Toggle comment line" })
+vim.keymap.set('v', '<C-/>', 'gc', { remap = true, desc = "Toggle comment" })
+vim.keymap.set('v', '<C-_>', 'gc', { remap = true, desc = "Toggle comment" })
+vim.keymap.set('o', '<C-/>', 'gc', { remap = true, desc = "Comment textobject" })
+vim.keymap.set('o', '<C-_>', 'gc', { remap = true, desc = "Comment textobject" })
+
+-- Neovim 0.10+ built-in commenting functionality
+-- gcc            - Comment/uncomment current line
+-- gc{motion}     - Comment/uncomment lines that {motion} moves over
+-- {Visual}gc     - Comment/uncomment the highlighted lines
+-- gC{motion}     - Comment/uncomment as a block
+-- {Visual}gC     - Comment/uncomment the highlighted lines as a block
+-- gcO            - Add comment on the line above
+-- gco            - Add comment on the line below
+-- gcA            - Add comment at the end of line

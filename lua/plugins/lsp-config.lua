@@ -90,25 +90,6 @@ return {
         init_options = {
           fallbackFlags = { "-std=c++17" }, -- Default to C++17 if no standard is specified
         },
-        -- Auto-detect the compile_commands.json location
-        on_init = function(client, _)
-          -- Try to find compile_commands.json in parent directories
-          local root_dir = client.config.root_dir
-          local compile_commands_paths = {
-            root_dir .. "/build/compile_commands.json",
-            root_dir .. "/compile_commands.json",
-          }
-          for _, path in ipairs(compile_commands_paths) do
-            local f = io.open(path, "r")
-            if f then
-              f:close()
-              -- Execute a command to tell clangd to use this compile_commands.json
-              vim.notify("Using compile_commands.json from: " .. path, vim.log.levels.INFO)
-              client.config.cmd = vim.list_extend(client.config.cmd, {"--compile-commands-dir=" .. vim.fn.fnamemodify(path, ":h")})
-              break
-            end
-          end
-        end,
       })
       
       -- Python LSP
