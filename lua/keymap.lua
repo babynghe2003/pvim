@@ -1,6 +1,12 @@
 local builtin = require("telescope.builtin")
+
 vim.keymap.set('n', '<C-p>', builtin.find_files, {})
 vim.keymap.set('n', '<C-f>', builtin.live_grep, {})
+
+vim.keymap.set('n', '<leader>ic', function()
+  builtin.lsp_incoming_calls(require("telescope.themes").get_ivy({}))
+end, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>oc', builtin.lsp_outgoing_calls, {})
 
 vim.keymap.set('n', '<C-h>', '<C-w>h', {})
 vim.keymap.set('n', '<C-j>', '<C-w>j', {})
@@ -24,9 +30,9 @@ vim.keymap.set('n', '<C-S-Left>', ':vertical resize -5<CR>', { noremap = true, s
 vim.keymap.set('n', '<C-S-Up>', ':resize +5<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-S-Down>', ':resize -5<CR>', { noremap = true, silent = true })
 
--- Highlight word under cursor with double-click
-vim.keymap.set('n', '<2-LeftMouse>', ":let @/='\\V\\<'.escape(expand('<cword>'), '\\').'\\'<cr>:set hls<cr>",
-  { noremap = true, silent = true })
+-- -- Highlight word under cursor with double-click
+-- vim.keymap.set('n', '<2-LeftMouse>', ":let @/='\\V\\<'.escape(expand('<cword>'), '\\').'\\'<cr>:set hls<cr>",
+--   { noremap = true, silent = true })
 
 -- Clear search highlights with Escape key
 vim.keymap.set('n', '<Esc>', ':nohl<CR>', { noremap = true, silent = true })
@@ -65,3 +71,8 @@ vim.keymap.set('o', '<C-_>', 'gc', { remap = true, desc = "Comment textobject" }
 -- gcO            - Add comment on the line above
 -- gco            - Add comment on the line below
 -- gcA            - Add comment at the end of line
+
+vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
+vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })
+vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds, { desc = "Reduce fold level" })
+vim.keymap.set("n", "zm", require("ufo").closeFoldsWith, { desc = "Increase fold level" })

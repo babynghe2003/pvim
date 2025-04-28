@@ -10,6 +10,7 @@ vim.cmd("set clipboard=unnamedplus")
 vim.cmd("set ignorecase")
 vim.cmd("set smartcase")
 vim.cmd("set hlsearch")
+vim.cmd("set noshowmode")
 
 -- Auto-save and Auto-format configuration
 vim.api.nvim_create_augroup("AutoSave", { clear = true })

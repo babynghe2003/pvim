@@ -56,6 +56,26 @@ local function setup_cmake_project()
   vim.keymap.set("n", "<leader>ct", ":CMakeSelectTarget<CR>", { buffer = true, silent = true })
   vim.notify("CMake project detected", vim.log.levels.INFO)
   
+  -- Check for compile_commands.json and create symlink if needed
+  local root_dir = vim.fn.getcwd()
+  local compile_commands_build = root_dir .. "/build/compile_commands.json"
+  local compile_commands_root = root_dir .. "/compile_commands.json"
+  
+  if vim.fn.filereadable(compile_commands_build) == 1 then
+    -- Check if symlink already exists
+    if vim.fn.filereadable(compile_commands_root) == 0 then
+      -- Create symlink from build/compile_commands.json to workspace root
+      local cmd = string.format("ln -s %s/build/compile_commands.json %s", root_dir, root_dir)
+      local success = vim.fn.system(cmd)
+      
+      if vim.v.shell_error == 0 then
+        vim.notify("Created symlink to compile_commands.json in workspace root", vim.log.levels.INFO)
+      else
+        vim.notify("Failed to create symlink to compile_commands.json: " .. success, vim.log.levels.ERROR)
+      end
+    end
+  end
+  
   -- CMake-specific compile and run command
   vim.api.nvim_buf_create_user_command(0, 'CompileAndRun', function()
     term_wrapper([[cmake --build build && ./build/$(basename $(find ./build -type f -executable -not -path '*/\.*' | head -n 1))]])

@@ -121,9 +121,12 @@ return {
       -- Qt/QML LSP - You'll need to install this server manually
       -- or use a custom method to set it up
       -- Uncomment and adjust if you have a QML language server installed
-      -- lspconfig.qmlls.setup({
-      --   -- Qt Language Server settings
-      -- })
+      lspconfig.qmlls.setup({
+        -- Qt Language Server settings
+        cmd = { '/home/as/Qt/Tools/QtDesignStudio/qt6_design_studio_reduced_version/bin/qmlls'},
+        filetypes = { 'qml', 'qmljs'}
+        -- /home/as/Qt/Tools/QtDesignStudio/qt6_design_studio_reduced_version/bin/qmlls
+      })
     end
   }
 }
