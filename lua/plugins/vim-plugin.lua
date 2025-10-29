@@ -1,4 +1,4 @@
-return {
+return {{
   'mg979/vim-visual-multi',
   lazy = false,
   branch = "master",
@@ -19,5 +19,19 @@ return {
       ["Mouse Column"]                = '<M-S-RightMouse>',
     }
   end
+},
+{
+  "iamcco/markdown-preview.nvim",
+  cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+  build = "cd app && npm install",
+  init = function()
+    vim.g.mkdp_filetypes = { "markdown" }
+  end,
+  ft = { "markdown" },
+},
+{
+  'https://gitlab.com/itaranto/plantuml.nvim',
+  version = '*',
+  config = function() require('plantuml').setup() end,
 }
-
+}

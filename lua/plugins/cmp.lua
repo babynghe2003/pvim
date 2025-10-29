@@ -13,7 +13,7 @@ return {
     config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
-      
+
       -- Load friendly-snippets
       require("luasnip.loaders.from_vscode").lazy_load()
 
@@ -62,12 +62,12 @@ return {
           format = function(entry, vim_item)
             -- Check if icons module exists, if not, use a simpler format
             local has_icons, icons = pcall(require, 'config.icons') 
-            
+
             if has_icons then
               -- Kind icons
               vim_item.kind = string.format('%s %s', icons.icons[vim_item.kind] or "", vim_item.kind)
             end
-            
+
             -- Source
             vim_item.menu = ({
               nvim_lsp = "[LSP]",
@@ -108,21 +108,21 @@ return {
           { name = 'cmdline' }
         })
       })
-      
+
       -- Set up lspconfig with nvim-cmp
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      
+
       -- Update capabilities for all LSP servers
-      local lspconfig = require('lspconfig')
+      -- local lspconfig = require('lspconfig')
       local servers = { 'lua_ls', 'clangd', 'pyright', 'dartls', 'cmake' }
       for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup {
+        vim.lsp.config[lsp] = {
           capabilities = capabilities,
         }
       end
     end
   },
-  
+
   -- Add icons for completion menu
   {
     "nvim-tree/nvim-web-devicons",
