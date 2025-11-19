@@ -1,10 +1,12 @@
 return {
-    "github/copilot.vim",
-    -- disable copilot by default
-    lazy = true,
-    keys = { "<leader>ce" },
-    config = function()
+  "github/copilot.vim",
+  -- disable copilot by default
+  lazy = true,
+  keys = { "<leader>c" },
+  config = function()
     vim.cmd("Copilot setup") -- Line I added
-    end,
+    -- set C-L to accept
+    vim.api.nvim_set_keymap("i", "<C-L>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+  end
 }
 
