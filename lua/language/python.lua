@@ -5,14 +5,32 @@
 -------------------------------------------------
 local function find_venv()
   local cwd = vim.fn.getcwd()
-  local venv_path = cwd .. '/venv'
-  
-  if vim.fn.isdirectory(venv_path) == 1 and vim.fn.filereadable(venv_path .. '/bin/activate') == 1 then
-    return venv_path
-  else
-    return ''
+  local candidates = {
+    cwd .. '/venv',
+    cwd .. '/.venv',
+    cwd .. '/env',
+    cwd .. '/.env',
+  }
+
+  for _, venv_path in ipairs(candidates) do
+    if vim.fn.isdirectory(venv_path) == 1 and vim.fn.filereadable(venv_path .. '/bin/activate') == 1 then
+      return venv_path
+    end
   end
+  return ''
 end
+
+-------------------------------------------------
+-- Python Interpreter Detection
+-------------------------------------------------
+local function get_python_interpreter()
+  local venv_path = find_venv()
+  if venv_path ~= '' and vim.fn.filereadable(venv_path .. '/bin/python') == 1 then
+    return venv_path .. '/bin/python'
+  end
+  return vim.fn.exepath('python3') ~= '' and vim.fn.exepath('python3') or 'python3'
+end
+
 
 -------------------------------------------------
 -- Terminal Integration
@@ -52,6 +70,7 @@ local function term_wrapper(command)
   })
 end
 
+
 -------------------------------------------------
 -- Main Setup Function
 -------------------------------------------------
@@ -74,28 +93,35 @@ local function setup_python()
       vim.opt_local.textwidth = 88  -- Black formatter default
       
       -- Create Python execution commands
-      vim.api.nvim_buf_create_user_command(0, 'CompileAndRunPython', function()
-        local file = vim.fn.expand('%')
-        term_wrapper(string.format('python3 %s', file))
-      end, {})
-      
-      vim.api.nvim_buf_create_user_command(0, 'CompileAndRunWithFilePython', function(opts)
-        local file = vim.fn.expand('%')
-        local output_file = opts.args
-        term_wrapper(string.format('python3 %s >> %s', file, output_file))
-      end, {nargs = 1, complete = 'file'})
-      
+        local python_interpreter = get_python_interpreter()
+        vim.api.nvim_buf_create_user_command(0, 'CompileAndRunPython', function()
+          local file = vim.fn.expand('%')
+          term_wrapper(string.format('%s %s', python_interpreter, file))
+        end, {})
+        
+        vim.api.nvim_buf_create_user_command(0, 'CompileAndRunWithFilePython', function(opts)
+          local file = vim.fn.expand('%')
+          local output_file = opts.args
+          term_wrapper(string.format('%s %s >> %s', python_interpreter, file, output_file))
+        end, {nargs = 1, complete = 'file'})
+        
       -- Key mappings
       vim.keymap.set('n', 'fw', ':CompileAndRunPython<CR>', { buffer = true, silent = true })
       
-      -- Python-specific environment setup
-      local venv_path = find_venv()
-      if venv_path ~= "" then
-        vim.notify("Found Python virtual environment: " .. venv_path, vim.log.levels.INFO)
-      elseif vim.fn.executable("poetry") == 1 then
-        -- Try Poetry if no standard venv found
-        vim.env.PYTHONPATH = vim.fn.system("poetry env info -p"):gsub("%s+$", "") .. "/lib/python3.*/site-packages"
-      end
+        -- Python-specific environment setup
+        local venv_path = find_venv()
+        if venv_path ~= "" then
+          vim.notify("Found Python virtual environment: " .. venv_path, vim.log.levels.INFO)
+        elseif vim.fn.executable("poetry") == 1 then
+          -- Try Poetry if no standard venv found
+          vim.env.PYTHONPATH = vim.fn.system("poetry env info -p"):gsub("%s+$", "") .. "/lib/python3.*/site-packages"
+        end
+        -- Set PYTHONPATH to src if it exists in project root
+        local cwd = vim.fn.getcwd()
+        local src_path = cwd .. '/src'
+        if vim.fn.isdirectory(src_path) == 1 then
+          vim.env.PYTHONPATH = src_path
+        end
     end
   })
 end
