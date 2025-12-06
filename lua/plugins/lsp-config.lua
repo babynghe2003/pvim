@@ -15,6 +15,7 @@ return {
           "html",
           "cssls",
           "ruff",
+          "rust_analyzer",
           -- "cmake",      -- CMake
           -- "clangd",     -- C++
           -- "pyright",    -- Python
@@ -57,7 +58,6 @@ return {
           "clangd",
           "--background-index",
           "--suggest-missing-includes",
-          "--clang-tidy",
           "--header-insertion=iwyu",
           "--compile-commands-dir=build", -- Look for compile_commands.json in the build directory
           "--offset-encoding=utf-16",     -- Fixes some offset encoding issues
@@ -124,6 +124,20 @@ return {
           less = { validate = true },
         },
       }
+      })
+
+      -- Rust LSP
+      lspconfig.rust_analyzer.setup({
+        settings = {
+          ['rust-analyzer'] = {
+            cargo = { allFeatures = true },
+            checkOnSave = true,
+            procMacro = {
+              enable = true
+            }
+          }
+        }
+      })
     end
   }
 }

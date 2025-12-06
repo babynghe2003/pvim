@@ -5,6 +5,7 @@ local M = {}
 function M.setup()
   -- Load language configurations
   require("language.cpp")
+  require("language.rust")
   require("language.python")
   require("language.verilog")
   require("language.latex")
