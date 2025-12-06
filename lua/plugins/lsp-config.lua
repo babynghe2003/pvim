@@ -15,6 +15,7 @@ return {
           "html",
           "cssls",
           "ruff",
+          "pyright",
           "rust_analyzer",
           -- "cmake",      -- CMake
           -- "clangd",     -- C++
@@ -51,93 +52,106 @@ return {
         end
       })
 
-      -- Lua LSP
-     -- C++ LSP
-      vim.lsp.config.clangd = {
-        cmd = {
+      local servers = {
+        {
           "clangd",
-          "--background-index",
-          "--suggest-missing-includes",
-          "--header-insertion=iwyu",
-          "--compile-commands-dir=build", -- Look for compile_commands.json in the build directory
-          "--offset-encoding=utf-16",     -- Fixes some offset encoding issues
-          "--enable-config",              -- Use .clangd configuration files if any
-          "--fallback-style=Google",      -- Coding style for formatting if no .clang-format file
-          "--all-scopes-completion",      -- Complete from all accessible scopes
-          "--cross-file-rename",          -- Enable rename across files
-          "--completion-style=detailed",  -- Provides more detailed completion items
-        },
-        init_options = {
-          fallbackFlags = { "-std=c++17" }, -- Default to C++17 if no standard is specified
-        },
-      }
-
-
-      -- CMake LSP
-      vim.lsp.config.cmake = {
-        -- Default CMake language server settings
-        init_options = {
-          buildDirectory = "build"
-        }
-      }
-
-      -- Qt/QML LSP - You'll need to install this server manually
-      -- or use a custom method to set it up
-      -- Uncomment and adjust if you have a QML language server installed
-      vim.lsp.config.qmlls = {
-        -- Qt Language Server settings
-        cmd = { '/home/as/Qt/Tools/QtDesignStudio/qt6_design_studio_reduced_version/bin/qmlls' },
-        filetypes = { 'qml', 'qmljs' }
-        -- /home/as/Qt/Tools/QtDesignStudio/qt6_design_studio_reduced_version/bin/qmlls
-      }
-      -- JavaScript/TypeScript LSP
-      vim.lsp.config.ts_ls = {
-        settings = {
-          javascript = {
-            format = {
-              enable = true,
+          {
+            cmd = {
+              "clangd",
+              "--background-index",
+              "--suggest-missing-includes",
+              "--header-insertion=iwyu",
+              "--compile-commands-dir=build",
+              "--offset-encoding=utf-16",
+              "--enable-config",
+              "--fallback-style=Google",
+              "--all-scopes-completion",
+              "--cross-file-rename",
+              "--completion-style=detailed",
             },
-          },
-          typescript = {
-            format = {
-              enable = true,
+            init_options = {
+              fallbackFlags = { "-std=c++17" },
             },
-          },
+          }
         },
-      }
-
-      -- HTML LSP
-      vim.lsp.config.html  = {
-        cmd = { "vscode-html-language-server", "--stdio" },
-        filetypes = { "html" },
-        init_options = {
-          configuration = {},
-        },
-      }
-
-      -- CSS LSP
-      vim.lsp.config.cssls = {
-         cmd = { "vscode-css-language-server", "--stdio" },
-        settings = {
-          css = { validate = true },
-          scss = { validate = true },
-          less = { validate = true },
-        },
-      }
-      })
-
-      -- Rust LSP
-      lspconfig.rust_analyzer.setup({
-        settings = {
-          ['rust-analyzer'] = {
-            cargo = { allFeatures = true },
-            checkOnSave = true,
-            procMacro = {
-              enable = true
+        {
+          "cmake",
+          {
+            init_options = {
+              buildDirectory = "build"
             }
           }
+        },
+        {
+          "qmlls",
+          {
+            cmd = { '/home/as/Qt/Tools/QtDesignStudio/qt6_design_studio_reduced_version/bin/qmlls' },
+            filetypes = { 'qml', 'qmljs' }
+          }
+        },
+        {
+          "ts_ls",
+          {
+            settings = {
+              javascript = { format = { enable = true } },
+              typescript = { format = { enable = true } },
+            },
+          }
+        },
+        {
+          "html",
+          {
+            cmd = { "vscode-html-language-server", "--stdio" },
+            filetypes = { "html" },
+            init_options = { configuration = {} },
+          }
+        },
+        {
+          "cssls",
+          {
+            cmd = { "vscode-css-language-server", "--stdio" },
+            settings = {
+              css = { validate = true },
+              scss = { validate = true },
+              less = { validate = true },
+            },
+          }
+        },
+        {
+          "pyright",
+          {
+            settings = {
+              python = {
+                analysis = {
+                  autoImportCompletions = true,
+                  typeCheckingMode = "standard",
+                  diagnosticMode = "openFilesOnly",
+                }
+              }
+            }
+          }
+        },
+        {
+          "rust_analyzer",
+          {
+            settings = {
+              ['rust-analyzer'] = {
+                cargo = { allFeatures = true },
+                checkOnSave = true,
+                procMacro = { enable = true },
+              }
+            },
+          }
         }
-      })
+      }
+
+      for _, server in ipairs(servers) do
+        local name, config = server[1], server[2]
+        if config then
+          vim.lsp.config(name, config)
+        end
+        vim.lsp.enable(name)
+      end
     end
   }
 }
